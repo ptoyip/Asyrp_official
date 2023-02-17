@@ -5,6 +5,7 @@ from PIL import Image
 import torchvision.transforms as tfs
 import os
 
+
 class MultiResolutionDataset(Dataset):
     def __init__(self, path, transform, resolution=256):
         self.env = lmdb.open(
@@ -42,22 +43,23 @@ class MultiResolutionDataset(Dataset):
 
 ################################################################################
 
+
 def get_celeba_dataset(data_root, config):
-    train_transform = tfs.Compose([tfs.ToTensor(),
-                                   tfs.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5),
-                                                 inplace=True)])
+    train_transform = tfs.Compose(
+        [tfs.ToTensor(), tfs.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)]
+    )
 
-    test_transform = tfs.Compose([tfs.ToTensor(),
-                                  tfs.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5),
-                                                inplace=True)])
-
-    train_dataset = MultiResolutionDataset(os.path.join(data_root, 'LMDB_train'),
-                                           train_transform, config.data.image_size)
-    test_dataset = MultiResolutionDataset(os.path.join(data_root, 'LMDB_test'),
-                                          test_transform, config.data.image_size)
-
+    test_transform = tfs.Compose(
+        [tfs.ToTensor(), tfs.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5), inplace=True)]
+    )
+    print("~" * 100)
+    tmp = os.path.join(data_root, "LMDB_train")
+    print(f"data root = {data_root}, LMDB_path = {str(tmp)}")
+    train_dataset = MultiResolutionDataset(
+        os.path.join(data_root, "LMDB_train"), train_transform, config.data.image_size
+    )
+    test_dataset = MultiResolutionDataset(
+        os.path.join(data_root, "LMDB_test"), test_transform, config.data.image_size
+    )
 
     return train_dataset, test_dataset
-
-
-

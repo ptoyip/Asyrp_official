@@ -11,6 +11,7 @@ from torch.utils.data import Dataset
 import os
 from torchvision import transforms
 
+
 class CustomImageDataset(Dataset):
     def __init__(self, img_dir, transform=None, test_nums=None, train=True):
         self.img_dir = img_dir
@@ -27,44 +28,120 @@ class CustomImageDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path = os.path.join(self.img_dir, self.img_files[idx])
-        image = Image.open(img_path).convert('RGB')
+        image = Image.open(img_path).convert("RGB")
         if self.transform:
             image = self.transform(image)
 
         return image
 
-def get_dataset(dataset_type, dataset_paths, config, target_class_num=None, gender=None):
+
+def get_dataset(
+    dataset_type, dataset_paths, config, target_class_num=None, gender=None
+):
     # if category is CUSTOM, get images from custom arg path
     if config.data.category == "CUSTOM":
-        train_dataset = CustomImageDataset(dataset_paths['custom_train'], transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]))
-        test_dataset = CustomImageDataset(dataset_paths['custom_test'], transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]))
+        train_path = dataset_paths["custom_train"]
+        test_path = dataset_paths["custom_test"]
+        print(f"Now using train dataset from {train_path} and test dataset {test_path}")
+        train_dataset = CustomImageDataset(
+            dataset_paths["custom_train"],
+            transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+        )
+        test_dataset = CustomImageDataset(
+            dataset_paths["custom_test"],
+            transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+        )
         return train_dataset, test_dataset
 
-    if dataset_type == 'AFHQ':
-        train_dataset, test_dataset = get_afhq_dataset(dataset_paths['AFHQ'], config)
+    if dataset_type == "AFHQ":
+        train_dataset, test_dataset = get_afhq_dataset(dataset_paths["AFHQ"], config)
     elif dataset_type == "LSUN":
-        train_dataset, test_dataset = get_lsun_dataset(dataset_paths['LSUN'], config)
+        train_dataset, test_dataset = get_lsun_dataset(dataset_paths["LSUN"], config)
     elif dataset_type == "CelebA_HQ-attr":
-        train_dataset, test_dataset = get_celeba_dataset_attr(dataset_paths['CelebA_HQ'], config)
+        train_dataset, test_dataset = get_celeba_dataset_attr(
+            dataset_paths["CelebA_HQ"], config
+        )
     elif dataset_type == "CelebA_HQ":
-        train_dataset, test_dataset = get_celeba_dataset(dataset_paths['CelebA_HQ'], config)
+        train_dataset, test_dataset = get_celeba_dataset(
+            dataset_paths["CelebA_HQ"], config
+        )
     elif dataset_type == "CelebA_HQ_Dialog":
-        train_dataset, test_dataset = get_celeba_dialog_dataset(dataset_paths['CelebA_HQ_Dialog'], config)
+        train_dataset, test_dataset = get_celeba_dialog_dataset(
+            dataset_paths["CelebA_HQ_Dialog"], config
+        )
     elif dataset_type == "IMAGENET":
-        train_dataset, test_dataset = get_imagenet_dataset(dataset_paths['IMAGENET'], config, class_num=target_class_num)
+        train_dataset, test_dataset = get_imagenet_dataset(
+            dataset_paths["IMAGENET"], config, class_num=target_class_num
+        )
     elif dataset_type == "MetFACE":
-        train_dataset = CustomImageDataset(os.path.join(dataset_paths['MetFACE'],'images'), transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]), test_nums=500)
-        test_dataset = CustomImageDataset(os.path.join(dataset_paths['MetFACE'],'images'), transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]), test_nums=500, train=False)
+        train_dataset = CustomImageDataset(
+            os.path.join(dataset_paths["MetFACE"], "images"),
+            transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+            test_nums=500,
+        )
+        test_dataset = CustomImageDataset(
+            os.path.join(dataset_paths["MetFACE"], "images"),
+            transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+            test_nums=500,
+            train=False,
+        )
     elif dataset_type == "FFHQ":
-        train_dataset = CustomImageDataset(dataset_paths['FFHQ'], transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]), test_nums=500)
-        test_dataset = CustomImageDataset(dataset_paths['FFHQ'], transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]), test_nums=500, train=False)
+        train_dataset = CustomImageDataset(
+            dataset_paths["FFHQ"],
+            transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+            test_nums=500,
+        )
+        test_dataset = CustomImageDataset(
+            dataset_paths["FFHQ"],
+            transforms.Compose(
+                [
+                    transforms.Resize((256, 256)),
+                    transforms.ToTensor(),
+                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                ]
+            ),
+            test_nums=500,
+            train=False,
+        )
     else:
         raise ValueError
 
     return train_dataset, test_dataset
 
 
-def get_dataloader(train_dataset, test_dataset, bs_train=1, num_workers=0, shuffle=False):
+def get_dataloader(
+    train_dataset, test_dataset, bs_train=1, num_workers=0, shuffle=False
+):
     train_loader = DataLoader(
         train_dataset,
         batch_size=bs_train,
@@ -84,6 +161,4 @@ def get_dataloader(train_dataset, test_dataset, bs_train=1, num_workers=0, shuff
         pin_memory=True,
     )
 
-    return {'train': train_loader, 'test': test_loader}
-
-
+    return {"train": train_loader, "test": test_loader}
