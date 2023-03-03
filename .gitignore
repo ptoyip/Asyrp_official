@@ -1,3 +1,7 @@
 test/
 precomputed/
 pretrained/
+runs/
+runs_yipkc/
+__pycache__/
+checkpoint/
